@@ -84,7 +84,8 @@ return {
       -- function(server, opts) require("lspconfig")[server].setup(opts) end
 
       -- the key is the server that is being setup with `lspconfig`
-      -- rust_analyzer = false, -- setting a handler to false will disable the set up of that language server
+      basedpyright = false, -- disabled in favour of ty (tylsp.nvim)
+      tylsp = false, -- handled by tylsp.nvim plugin directly
       -- pyright = function(_, opts) require("lspconfig").pyright.setup(opts) end -- or a custom handler function can be passed
     },
     -- Configure buffer local auto commands to add when attaching a language server
