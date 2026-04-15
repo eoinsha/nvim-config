@@ -15,8 +15,13 @@ return {
       init = { -- this table overrides highlights in all themes
         -- Normal = { bg = "#000000" },
       },
-      astrodark = { -- a table of overrides/changes when applying the astrotheme theme
-        -- Normal = { bg = "#000000" },
+      astrodark = {
+        StatusLine = { fg = "#d4d4d4", bg = "#2a2f3a" },
+        StatusLineNC = { fg = "#a0a0a0", bg = "#20242d" },
+        SignColumn = { fg = "#d4d4d4", bg = "NONE" },
+        LineNr = { fg = "#8a8f99", bg = "NONE" },
+        CursorLineNr = { fg = "#ffcc66", bg = "NONE", bold = true },
+        FoldColumn = { fg = "#8a8f99", bg = "NONE" },
       },
     },
     -- Icons can be configured throughout the interface

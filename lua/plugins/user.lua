@@ -1,5 +1,6 @@
 ---@type LazySpec
-local excludes = { "**/cdk.out", "**/node_modules", "**/.venv", "**/.idea" }
+local excludes =
+  { "**/cdk.out", "**/node_modules", "**/.venv", "**/.idea", "**/.kiro", "**/.pytest_cache", "**/.uv-cache" }
 
 return {
   -- == Examples of Adding Plugins ==
@@ -34,15 +35,28 @@ return {
       -- or leave it empty to use the default settings
       -- refer to the configuration section below
       bigfile = { enabled = true },
-      dashboard = { enabled = true },
+      dashboard = {
+        enabled = true,
+        preset = {
+          header = "hello",
+        },
+      },
       explorer = {
         enabled = true,
         exclude = excludes,
       },
       indent = { enabled = true },
       input = { enabled = true },
-      grep = { enabled = true, exclude = excludes },
-      picker = { enabled = true, exclude = excludes },
+      grep = { enabled = true, exclude = excludes, hidden = false, ignored = false },
+      picker = {
+        enabled = true,
+        exclude = excludes,
+        sources = {
+          grep = { hidden = false, ignored = false },
+          grep_word = { hidden = false, ignored = false },
+          files = { hidden = false, ignored = false },
+        },
+      },
       notifier = { enabled = true },
       quickfile = { enabled = true },
       scope = { enabled = true },
@@ -60,143 +74,6 @@ return {
     },
   },
 
-  -- -- LSP server stuff --
-  -- {
-  --   "neovim/nvim-lspconfig",
-  --   dependencies = {
-  --     "williamboman/mason.nvim",
-  --     "williamboman/mason-lspconfig.nvim"
-  --   },
-  --   config = function()
-  --     local capabilities = vim.lsp.protocol.make_client_capabilities()
-  --     capabilities = require('cmp_nvim_lsp').default_capabilities(capabilities)
-  --
-  --   require('mason').setup()
-  --     local mason_lspconfig = require 'mason-lspconfig'
-  --     mason_lspconfig.setup {
-  --       ensure_installed = { "pyright" }
-  --     }
-  --     require("lspconfig").pyright.setup {
-  --       capabilities = capabilities,
-  --     }
-  --   end
-  -- },
-  --
-  -- -- Autocompletion --
-  -- {
-  --   "hrsh7th/nvim-cmp",
-  --   dependencies = {
-  --     "hrsh7th/cmp-nvim-lsp",
-  --   },
-  --   config = function()
-  --     local has_words_before = function()
-  --       unpack = unpack or table.unpack
-  --       local line, col = unpack(vim.api.nvim_win_get_cursor(0))
-  --       return col ~= 0 and vim.api.nvim_buf_get_lines(0, line - 1, line, true)[1]:sub(col, col):match("%s") == nil
-  --     end
-  --
-  --     local cmp = require('cmp')
-  --
-  --     cmp.setup({
-  --       completion = {
-  --         autocomplete = false
-  --       },
-  --       mapping = cmp.mapping.preset.insert ({
-  --         ["<Tab>"] = cmp.mapping(function(fallback)
-  --           if cmp.visible() then
-  --             cmp.select_next_item()
-  --           elseif has_words_before() then
-  --             cmp.complete()
-  --           else
-  --             fallback()
-  --           end
-  --         end, { "i", "s" }),
-  --         ["<s-Tab>"] = cmp.mapping(function(fallback)
-  --           if cmp.visible() then
-  --             cmp.select_prev_item()
-  --           else
-  --             fallback()
-  --           end
-  --         end, { "i", "s" }),
-  --         ["<c-e>"] = cmp.mapping.abort(),
-  --         ["<CR>"] = cmp.mapping.confirm({ select=true }),
-  --       }),
-  --       sources = {
-  --         { name = "nvim_lsp" },
-  --       }
-  --     })
-  --   end
-  -- },
-  --
-  -- -- Treesitter for code parsing --
-  -- {
-  --   "nvim-treesitter/nvim-treesitter", version = false,
-  --   build = function()
-  --     require("nvim-treesitter.install").update({ with_sync = true })
-  --   end,
-  --   config = function()
-  --     require("nvim-treesitter.configs").setup({
-  --       ensure_installed = { "c", "lua", "vim", "vimdoc", "query", "python", "javascript" },
-  --       auto_install = false,
-  --      highlight = { enable = true, additional_vim_regex_highlighting = false },
-  --       incremental_selection = {
-  --         enable = true,
-  --         keymaps = {
-  --           init_selection = "<C-n>",
-  --           node_incremental = "<C-n>",
-  --           scope_incremental = "<C-s>",
-  --           node_decremental = "<C-m>",
-  --         }
-  --       }
-  --     })
-  --   end
-  -- },
-  --
-  -- -- Telescope fuzzy finding  --
-  -- {
-  --   "nvim-telescope/telescope.nvim", cmd = "Telescope", version = false,
-  --   dependencies = { "nvim-lua/plenary.nvim" },
-  --   keys = {
-  --     { "<leader>sf", "<cmd>Telescope git_files<cr>", desc = "Find Files (root dir)" },
-  --     { "<leader><space>", "<cmd>Telescope buffers<cr>", desc = "Find Buffers" },
-  --     { "<leader>sg", "<cmd>Telescope live_grep<cr>", desc = "Search Project" },
-  --     { "<leader>ss", "<cmd>Telescope lsp_document_symbols<cr>", desc = "Search Document Symbols" },
-  --     { "<leader>sw", "<cmd>Telescope lsp_dynamic_workspace_symbols<cr>", desc = "Search Workspace Symbols" },
-  --   },
-  --   opts = {
-  --     extensions = {
-  --       fzf = {
-  --         fuzzy = true,
-  --         override_generic_sorter = true,
-  --         override_file_sorter = true,
-  --         case_mode = "smart_case"
-  --       }
-  --     }
-  --   }
-  -- },
-  -- { "nvim-telescope/telescope-fzf-native.nvim",
-  --   build = "make",
-  --   config = function()
-  --     require('telescope').load_extension('fzf')
-  --   end
-  -- },
-  -- == Examples of Overriding Plugins ==
-
-  -- customize dashboard options
-  {
-    "folke/snacks.nvim",
-    opts = {
-      dashboard = {
-        preset = {
-          header = table.concat({
-            "hello",
-          }, "\n"),
-        },
-      },
-    },
-  },
-
-  -- You can disable default plugins as follows:
   { "max397574/better-escape.nvim", enabled = false },
 
   {
@@ -249,7 +126,44 @@ return {
   },
   {
     "nvimdev/lspsaga.nvim",
+    event = "LspAttach",
     config = function() require("lspsaga").setup {} end,
+    keys = {
+      { "gp", "<cmd>Lspsaga peek_definition<cr>", desc = "Peek definition (Saga)" },
+      { "gP", "<cmd>Lspsaga peek_type_definition<cr>", desc = "Peek type definition (Saga)" },
+      { "gf", "<cmd>Lspsaga finder<cr>", desc = "LSP finder (Saga)" },
+      { "K", "<cmd>Lspsaga hover_doc<cr>", desc = "Hover (Saga)" },
+      { "<Leader>lo", "<cmd>Lspsaga outline<cr>", desc = "Symbol outline (Saga)" },
+      { "<Leader>la", "<cmd>Lspsaga code_action<cr>", mode = { "n", "v" }, desc = "Code action (Saga)" },
+      { "<Leader>lR", "<cmd>Lspsaga rename<cr>", desc = "Rename (Saga)" },
+      { "[e", "<cmd>Lspsaga diagnostic_jump_prev<cr>", desc = "Prev diagnostic (Saga)" },
+      { "]e", "<cmd>Lspsaga diagnostic_jump_next<cr>", desc = "Next diagnostic (Saga)" },
+      { "<Leader>ld", "<cmd>Lspsaga show_line_diagnostics<cr>", desc = "Line diagnostics (Saga)" },
+    },
+  },
+  {
+    "folke/trouble.nvim",
+    cmd = "Trouble",
+    opts = {},
+    specs = {
+      {
+        "AstroNvim/astrocore",
+        opts = {
+          mappings = {
+            n = {
+              ["<Leader>xd"] = {
+                "<cmd>Trouble diagnostics toggle filter.buf=0<cr>",
+                desc = "Buffer diagnostics (Trouble)",
+              },
+              ["<Leader>xD"] = {
+                "<cmd>Trouble diagnostics toggle<cr>",
+                desc = "Workspace diagnostics (Trouble)",
+              },
+            },
+          },
+        },
+      },
+    },
   },
   -- {
   --   "akinsho/toggleterm.nvim",
@@ -264,6 +178,4 @@ return {
   --     }
   --   end,
   -- },
-
-  mappings = {},
 }
