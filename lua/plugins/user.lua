@@ -57,12 +57,25 @@ return {
           files = { hidden = false, ignored = false },
         },
       },
+      lazygit = { enabled = true },
       notifier = { enabled = true },
       quickfile = { enabled = true },
       scope = { enabled = true },
       scroll = { enabled = true },
       statuscolumn = { enabled = true },
       words = { enabled = true },
+    },
+  },
+
+  {
+    "AstroNvim/astrocore",
+    opts = {
+      mappings = {
+        n = {
+          ["<Leader>gg"] = { function() Snacks.lazygit() end, desc = "Lazygit" },
+          ["<Leader>tl"] = { function() Snacks.lazygit() end, desc = "ToggleTerm lazygit" },
+        },
+      },
     },
   },
 
@@ -129,6 +142,7 @@ return {
     event = "LspAttach",
     config = function() require("lspsaga").setup {} end,
     keys = {
+      { "gd", "<cmd>Lspsaga goto_definition<cr>", desc = "Go to definition (Saga)" },
       { "gp", "<cmd>Lspsaga peek_definition<cr>", desc = "Peek definition (Saga)" },
       { "gP", "<cmd>Lspsaga peek_type_definition<cr>", desc = "Peek type definition (Saga)" },
       { "gf", "<cmd>Lspsaga finder<cr>", desc = "LSP finder (Saga)" },

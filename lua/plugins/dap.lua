@@ -71,4 +71,31 @@ return {
   },
 
   { "nvim-neotest/nvim-nio" },
+
+  -- Python adapter (debugpy)
+  {
+    "mfussenegger/nvim-dap-python",
+    dependencies = { "mfussenegger/nvim-dap", "rcarriga/nvim-dap-ui" },
+    ft = "python",
+    config = function()
+      local dap = require "dap"
+      local venv_py = vim.fn.getcwd() .. "/.venv/bin/python"
+      local py = vim.fn.executable(venv_py) == 1 and venv_py or "python3"
+      require("dap-python").setup(py)
+
+      dap.configurations.python = {
+        {
+          type = "python",
+          request = "launch",
+          name = "Launch file",
+          program = "${file}",
+          cwd = "${workspaceFolder}",
+          console = "integratedTerminal",
+          args = function()
+            return vim.split(vim.fn.input "Args: ", " ", { trimempty = true })
+          end,
+        },
+      }
+    end,
+  },
 }
