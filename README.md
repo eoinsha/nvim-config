@@ -29,6 +29,8 @@ A modern Neovim setup based on [AstroNvim v5](https://github.com/AstroNvim/Astro
 | `<Space>` | Leader key |
 | `,` | Local leader key |
 | `M-.` | Quick fix (preferred LSP code action) |
+| `<Leader>lR` | LSP references |
+| `<Leader>lr` | LSP rename |
 | `<Esc>` (terminal) | Exit terminal mode |
 | `<F5>` | DAP continue |
 | `<F10>` | DAP step over |
