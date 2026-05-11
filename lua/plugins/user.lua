@@ -72,6 +72,46 @@ return {
     opts = {
       mappings = {
         n = {
+          ["zR"] = {
+            function()
+              if require("astrocore").is_available "nvim-ufo" then
+                require("ufo").openAllFolds()
+              else
+                vim.cmd "normal! zR"
+              end
+            end,
+            desc = "Open all folds",
+          },
+          ["zM"] = {
+            function()
+              if require("astrocore").is_available "nvim-ufo" then
+                require("ufo").closeAllFolds()
+              else
+                vim.cmd "normal! zM"
+              end
+            end,
+            desc = "Close all folds",
+          },
+          ["zr"] = {
+            function()
+              if require("astrocore").is_available "nvim-ufo" then
+                require("ufo").openFoldsExceptKinds()
+              else
+                vim.opt_local.foldlevel = vim.wo.foldlevel + 1
+              end
+            end,
+            desc = "Open folds less",
+          },
+          ["zm"] = {
+            function()
+              if require("astrocore").is_available "nvim-ufo" then
+                require("ufo").closeFoldsWith()
+              else
+                vim.opt_local.foldlevel = math.max(0, vim.wo.foldlevel - 1)
+              end
+            end,
+            desc = "Close folds more",
+          },
           ["<Leader>gg"] = { function() Snacks.lazygit() end, desc = "Lazygit" },
           ["<Leader>tl"] = { function() Snacks.lazygit() end, desc = "ToggleTerm lazygit" },
         },
