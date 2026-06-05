@@ -55,6 +55,28 @@ return {
           grep = { hidden = false, ignored = false },
           grep_word = { hidden = false, ignored = false },
           files = { hidden = false, ignored = false },
+          git_status = {
+            win = {
+              input = {
+                keys = {
+                  ["<Tab>"] = { "git_stage", mode = { "n", "i" } },
+                  ["<C-r>"] = { "git_restore", mode = { "n", "i" }, nowait = true },
+                },
+              },
+            },
+          },
+          git_diff = {
+            group = false,
+            preview = "diff",
+            win = {
+              input = {
+                keys = {
+                  ["<Tab>"] = { "git_stage", mode = { "n", "i" } },
+                  ["<C-r>"] = { "git_restore", mode = { "n", "i" }, nowait = true },
+                },
+              },
+            },
+          },
         },
       },
       lazygit = { enabled = true },
@@ -65,6 +87,43 @@ return {
       statuscolumn = { enabled = true },
       words = { enabled = true },
     },
+  },
+
+  {
+    "lewis6991/gitsigns.nvim",
+    opts = function(_, opts)
+      local previous_on_attach = opts.on_attach
+
+      opts.signs_staged_enable = true
+      opts.preview_config = vim.tbl_deep_extend("force", opts.preview_config or {}, { border = "rounded" })
+
+      opts.on_attach = function(bufnr)
+        if previous_on_attach then previous_on_attach(bufnr) end
+
+        local gitsigns = require "gitsigns"
+
+        local function map(mode, lhs, rhs, desc)
+          vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
+        end
+
+        map("n", "]h", function() gitsigns.nav_hunk "next" end, "Next git hunk")
+        map("n", "[h", function() gitsigns.nav_hunk "prev" end, "Previous git hunk")
+        map("n", "<Leader>hp", gitsigns.preview_hunk, "Preview git hunk")
+        map("n", "<Leader>hs", gitsigns.stage_hunk, "Stage git hunk")
+        map("v", "<Leader>hs", function() gitsigns.stage_hunk { vim.fn.line ".", vim.fn.line "v" } end,
+          "Stage selected git hunks")
+        map("n", "<Leader>hr", gitsigns.reset_hunk, "Reset git hunk")
+        map("v", "<Leader>hr", function() gitsigns.reset_hunk { vim.fn.line ".", vim.fn.line "v" } end,
+          "Reset selected git hunks")
+        map("n", "<Leader>hS", gitsigns.stage_buffer, "Stage git buffer")
+        map("n", "<Leader>hR", gitsigns.reset_buffer, "Reset git buffer")
+        map("n", "<Leader>hb", function() gitsigns.blame_line { full = true } end, "Git blame line")
+        map("n", "<Leader>hD", gitsigns.diffthis, "Diff this file")
+        map("n", "<Leader>tb", gitsigns.toggle_current_line_blame, "Toggle git line blame")
+        map("n", "<Leader>th", gitsigns.toggle_deleted, "Toggle deleted lines")
+        map({ "o", "x" }, "ih", gitsigns.select_hunk, "Select git hunk")
+      end
+    end,
   },
 
   {
@@ -112,6 +171,9 @@ return {
             end,
             desc = "Close folds more",
           },
+          ["<Leader>gs"] = { function() Snacks.picker.git_status() end, desc = "Git changed files" },
+          ["<Leader>gd"] = { function() Snacks.picker.git_diff { group = false } end, desc = "Git changed hunks" },
+          ["<Leader>gf"] = { function() Snacks.picker.git_log_file() end, desc = "Git file history" },
           ["<Leader>gg"] = { function() Snacks.lazygit() end, desc = "Lazygit" },
           ["<Leader>tl"] = { function() Snacks.lazygit() end, desc = "ToggleTerm lazygit" },
         },
@@ -233,4 +295,30 @@ return {
   --     }
   --   end,
   -- },
+
+  {
+    "HakonHarnes/img-clip.nvim",
+    event = "BufEnter",
+    opts = {
+      default = {
+        embed_image_as_base64 = false,
+        prompt_for_file_name = false,
+        drag_and_drop = {
+          insert_mode = true,
+        },
+      },
+      filetypes = {
+        markdown = {
+          url_encode_path = true,
+          template = "![$CURSOR]($FILE_PATH)",
+          drag_and_drop = {
+            download_images = false,
+          },
+        },
+      },
+    },
+    keys = {
+      { "<leader>P", "<cmd>PasteImage<cr>", desc = "Paste image from clipboard" },
+    },
+  },
 }

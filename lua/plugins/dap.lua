@@ -87,13 +87,27 @@ return {
         {
           type = "python",
           request = "launch",
+          name = "ts-worker (local)",
+          module = "ts_worker",
+          cwd = "${workspaceFolder}/ts-worker",
+          console = "integratedTerminal",
+          env = {
+            ADAPTER_MODE = "local",
+            REDIS_URL = "redis://localhost:6379/0",
+            QUEUE_SLOT_IDS = '["0"]',
+            QUEUE_SLOT_ID = "0",
+            BLOB_STORE_PATH = vim.fn.expand "~/.turbo-runner/blob-store",
+            LOG_LEVEL = "DEBUG",
+          },
+        },
+        {
+          type = "python",
+          request = "launch",
           name = "Launch file",
           program = "${file}",
           cwd = "${workspaceFolder}",
           console = "integratedTerminal",
-          args = function()
-            return vim.split(vim.fn.input "Args: ", " ", { trimempty = true })
-          end,
+          args = function() return vim.split(vim.fn.input "Args: ", " ", { trimempty = true }) end,
         },
       }
     end,
