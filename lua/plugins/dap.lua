@@ -31,8 +31,49 @@ return {
         },
       }
 
-      -- DAP configurations for TS/JS
-      for _, language in ipairs { "typescript", "javascript", "typescriptreact", "javascriptreact" } do
+      dap.defaults["pwa-node"].focus_terminal = true
+      dap.defaults["pwa-node"].terminal_win_cmd = function()
+        vim.cmd "belowright new"
+        local bufnr = vim.api.nvim_get_current_buf()
+        local win = vim.api.nvim_get_current_win()
+
+        vim.schedule(function()
+          if vim.api.nvim_win_is_valid(win) then
+            vim.api.nvim_set_current_win(win)
+            vim.cmd "startinsert"
+          end
+        end)
+
+        return bufnr, win
+      end
+
+      local prompt_args = function() return vim.split(vim.fn.input "Args: ", " ", { trimempty = true }) end
+
+      -- DAP configurations for JS
+      for _, language in ipairs { "javascript", "javascriptreact" } do
+        dap.configurations[language] = {
+          {
+            type = "pwa-node",
+            request = "launch",
+            name = "Launch JS file",
+            cwd = "${fileDirname}",
+            program = "${file}",
+            runtimeExecutable = "node",
+            args = prompt_args,
+            sourceMaps = true,
+            protocol = "inspector",
+            console = "integratedTerminal",
+            skipFiles = { "<node_internals>/**", "${workspaceFolder}/node_modules/**" },
+            resolveSourceMapLocations = {
+              "${workspaceFolder}/**",
+              "!**/node_modules/**",
+            },
+          },
+        }
+      end
+
+      -- DAP configurations for TS
+      for _, language in ipairs { "typescript", "typescriptreact" } do
         dap.configurations[language] = {
           {
             type = "pwa-node",
@@ -42,6 +83,7 @@ return {
             program = "${file}",
             runtimeExecutable = "node",
             runtimeArgs = { "--import", "tsx" },
+            args = prompt_args,
             sourceMaps = true,
             protocol = "inspector",
             console = "integratedTerminal",
@@ -76,12 +118,31 @@ return {
   {
     "mfussenegger/nvim-dap-python",
     dependencies = { "mfussenegger/nvim-dap", "rcarriga/nvim-dap-ui" },
-    ft = "python",
     config = function()
       local dap = require "dap"
       local venv_py = vim.fn.getcwd() .. "/.venv/bin/python"
       local py = vim.fn.executable(venv_py) == 1 and venv_py or "python3"
       require("dap-python").setup(py)
+
+      local focus_terminal_win_cmd = function()
+        vim.cmd "belowright new"
+        local bufnr = vim.api.nvim_get_current_buf()
+        local win = vim.api.nvim_get_current_win()
+
+        vim.schedule(function()
+          if vim.api.nvim_win_is_valid(win) then
+            vim.api.nvim_set_current_win(win)
+            vim.cmd "startinsert"
+          end
+        end)
+
+        return bufnr, win
+      end
+
+      dap.defaults.python.focus_terminal = true
+      dap.defaults.python.terminal_win_cmd = focus_terminal_win_cmd
+      dap.defaults.debugpy.focus_terminal = true
+      dap.defaults.debugpy.terminal_win_cmd = focus_terminal_win_cmd
 
       dap.configurations.python = {
         {
