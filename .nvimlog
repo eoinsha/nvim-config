@@ -1,0 +1,3 @@
+WRN 2026-07-02T19:17:55.325 ?.88882    server_start:193: Failed to start server: operation not permitted: /var/folders/b4/hl3ns3wn1cv9jflss9cjs_hr0000gn/T/nvim.eoin/fpibDK/nvim.88882.0
+WRN 2026-07-02T19:17:55.329 ?.88881    server_start:193: Failed to start server: operation not permitted: /var/folders/b4/hl3ns3wn1cv9jflss9cjs_hr0000gn/T/nvim.eoin/1OFrl3/nvim.88881.0
+WRN 2026-07-02T19:37:58.136 ?.91179    server_start:193: Failed to start server: operation not permitted: /var/folders/b4/hl3ns3wn1cv9jflss9cjs_hr0000gn/T/nvim.eoin/d8eROS/nvim.91179.0

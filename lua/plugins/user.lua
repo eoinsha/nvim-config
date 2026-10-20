@@ -6,6 +6,7 @@ return {
   -- == Examples of Adding Plugins ==
 
   "nvim-tree/nvim-web-devicons",
+  { "ellisonleao/glow.nvim", config = true, cmd = "Glow" },
   { "catppuccin/nvim", lazy = true, name = "catppuccin", priority = 1000 },
   "andweeb/presence.nvim",
   {
@@ -102,19 +103,25 @@ return {
 
         local gitsigns = require "gitsigns"
 
-        local function map(mode, lhs, rhs, desc)
-          vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc })
-        end
+        local function map(mode, lhs, rhs, desc) vim.keymap.set(mode, lhs, rhs, { buffer = bufnr, desc = desc }) end
 
         map("n", "]h", function() gitsigns.nav_hunk "next" end, "Next git hunk")
         map("n", "[h", function() gitsigns.nav_hunk "prev" end, "Previous git hunk")
         map("n", "<Leader>hp", gitsigns.preview_hunk, "Preview git hunk")
         map("n", "<Leader>hs", gitsigns.stage_hunk, "Stage git hunk")
-        map("v", "<Leader>hs", function() gitsigns.stage_hunk { vim.fn.line ".", vim.fn.line "v" } end,
-          "Stage selected git hunks")
+        map(
+          "v",
+          "<Leader>hs",
+          function() gitsigns.stage_hunk { vim.fn.line ".", vim.fn.line "v" } end,
+          "Stage selected git hunks"
+        )
         map("n", "<Leader>hr", gitsigns.reset_hunk, "Reset git hunk")
-        map("v", "<Leader>hr", function() gitsigns.reset_hunk { vim.fn.line ".", vim.fn.line "v" } end,
-          "Reset selected git hunks")
+        map(
+          "v",
+          "<Leader>hr",
+          function() gitsigns.reset_hunk { vim.fn.line ".", vim.fn.line "v" } end,
+          "Reset selected git hunks"
+        )
         map("n", "<Leader>hS", gitsigns.stage_buffer, "Stage git buffer")
         map("n", "<Leader>hR", gitsigns.reset_buffer, "Reset git buffer")
         map("n", "<Leader>hb", function() gitsigns.blame_line { full = true } end, "Git blame line")
