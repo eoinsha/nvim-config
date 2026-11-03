@@ -4,7 +4,7 @@ local excludes =
 
 return {
   -- == Examples of Adding Plugins ==
-
+  "MeanderingProgrammer/render-markdown.nvim",
   "nvim-tree/nvim-web-devicons",
   { "ellisonleao/glow.nvim", config = true, cmd = "Glow" },
   { "catppuccin/nvim", lazy = true, name = "catppuccin", priority = 1000 },
