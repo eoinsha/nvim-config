@@ -15,12 +15,27 @@ A modern Neovim setup based on [AstroNvim v5](https://github.com/AstroNvim/Astro
 - **null-ls** - Formatters and linters
 
 ### UI/UX
-- **astrodark** colorscheme
+- **AstroDark / AstroLight** colorschemes with higher contrast and reduced bold styling
 - **snacks.nvim** - Dashboard, file explorer, picker, and more
 - **nvim-ufo** - Modern fold integration
 - **lspsaga.nvim** - LSP UI enhancements (hover, diagnostic windows)
 - **nvim-web-devicons** - File icons
 - **pipeline.nvim** - CI/CD pipeline viewer
+
+Theme selection lives in `lua/plugins/astroui.lua`, which uses the adaptive
+`astrotheme` colorscheme. Run `:set background=light` for AstroLight or
+`:set background=dark` for AstroDark. To persist a preference, add
+`background = "light"` (or `"dark"`) to `opts.options.opt` in
+`lua/plugins/astrocore.lua`.
+
+Astrotheme's `style`, `palettes`, and `highlights` options belong under `opts` in
+`lua/plugins/astrotheme.lua`. Lazy.nvim passes those options to Astrotheme's
+`setup` function. AstroUI's separate `highlights.init` table can still override
+highlights across all colorschemes. Actual font family and Light/Regular weight
+are configured in your terminal; the theme removes bold highlight styling.
+
+The dark palette uses ivory text on deep blue, sage comments, and brighter
+secondary text.
 
 ### Keybindings
 
