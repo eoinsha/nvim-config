@@ -7,7 +7,7 @@ local function quickfix()
   }
 end
 
-vim.keymap.set("n", "M-.", quickfix, opts)
+vim.keymap.set("n", "<M-.>", quickfix, opts)
 
 -- easier terminal mode exit
 vim.keymap.set("t", "<Esc>", [[<C-\><C-n>]], { noremap = true })

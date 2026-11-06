@@ -249,7 +249,12 @@ return {
   {
     "nvimdev/lspsaga.nvim",
     event = "LspAttach",
-    config = function() require("lspsaga").setup {} end,
+    config = function()
+      require("lspsaga").setup {
+        -- sign column bulb covers DAP breakpoint markers; keep virtual text
+        lightbulb = { sign = false },
+      }
+    end,
     keys = {
       { "gd", "<cmd>Lspsaga goto_definition<cr>", desc = "Go to definition (Saga)" },
       { "gp", "<cmd>Lspsaga peek_definition<cr>", desc = "Peek definition (Saga)" },

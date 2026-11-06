@@ -16,6 +16,7 @@ return {
 
         -- install debuggers
         "debugpy",
+        "codelldb",
         "js-debug-adapter",
 
         -- install any other package

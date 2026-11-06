@@ -1,8 +1,43 @@
 ---@type LazySpec
 return {
   -- Core DAP
+  -- Rust adapter (CodeLLDB from Mason). The adapter name `lldb` matches the
+  -- `type` in .vscode/launch.json.
   {
     "mfussenegger/nvim-dap",
+    config = function()
+      local dap = require "dap"
+      dap.adapters.lldb = {
+        type = "server",
+        port = "${port}",
+        executable = {
+          command = vim.fn.stdpath "data" .. "/mason/bin/codelldb",
+          args = { "--port", "${port}" },
+        },
+      }
+      dap.configurations.rust = {
+        {
+          type = "lldb",
+          request = "launch",
+          name = "Launch binary",
+          program = function() return vim.fn.input("Binary: ", vim.fn.getcwd() .. "/target/debug/", "file") end,
+          cwd = "${workspaceFolder}",
+          stopOnEntry = false,
+        },
+      }
+      -- Cap lldb memory reads so Rust formatters can't hang on garbage lengths
+      -- (see lldb/cap_read.py). Applies to every lldb config, incl. launch.json.
+      dap.listeners.on_config["lldb_cap_read"] = function(config)
+        if config.type == "lldb" then
+          local cmds = vim.deepcopy(config.preRunCommands or {})
+          table.insert(cmds, "command script import " .. vim.fn.stdpath "config" .. "/lldb/cap_read.py")
+          config = vim.tbl_extend("force", config, { preRunCommands = cmds })
+        end
+        return config
+      end
+      -- Picks up the `lldb` entries of the project launch.json.
+      require("dap.ext.vscode").load_launchjs(nil, { lldb = { "rust" } })
+    end,
   },
 
   -- JS/TS adapter based on vscode-js-debug
@@ -113,6 +148,21 @@ return {
   },
 
   { "nvim-neotest/nvim-nio" },
+
+  -- Persist breakpoints between sessions
+  {
+    "Weissle/persistent-breakpoints.nvim",
+    event = "BufReadPost",
+    dependencies = { "mfussenegger/nvim-dap" },
+    opts = {
+      load_breakpoints_event = { "BufReadPost" },
+    },
+    keys = {
+      { "<Leader>db", function() require("persistent-breakpoints.api").toggle_breakpoint() end, desc = "Toggle Breakpoint" },
+      { "<Leader>dC", function() require("persistent-breakpoints.api").set_conditional_breakpoint() end, desc = "Conditional Breakpoint" },
+      { "<Leader>dX", function() require("persistent-breakpoints.api").clear_all_breakpoints() end, desc = "Clear All Breakpoints" },
+    },
+  },
 
   -- Python adapter (debugpy)
   {

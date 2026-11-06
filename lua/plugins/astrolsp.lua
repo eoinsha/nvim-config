@@ -43,6 +43,25 @@ return {
     ---@diagnostic disable: missing-fields
     config = {
       -- clangd = { capabilities = { offsetEncoding = "utf-8" } },
+      -- Stepping into std in the debugger opens files under ~/.rustup/.../rustlib/src.
+      -- lspconfig reuses a running client for those, but with none running it falls
+      -- through and starts rust-analyzer on std's nightly-only Cargo.toml (popup:
+      -- "public-dependency requires a nightly version of Cargo"). Never start there.
+      rust_analyzer = {
+        root_dir = function(bufnr, on_dir)
+          local fname = vim.api.nvim_buf_get_name(bufnr)
+          if fname:find("/rustlib/src/", 1, true) then
+            local clients = vim.lsp.get_clients { name = "rust_analyzer" }
+            if #clients > 0 then on_dir(clients[#clients].config.root_dir) end
+            return
+          end
+          local files = vim.api.nvim_get_runtime_file("lsp/rust_analyzer.lua", false)
+          local ok, base = pcall(dofile, files[1] or "")
+          if ok and type(base) == "table" and base.root_dir then return base.root_dir(bufnr, on_dir) end
+          local root = vim.fs.root(fname, { "Cargo.toml", "rust-project.json", ".git" })
+          if root then on_dir(root) end
+        end,
+      },
       ts_ls = {
         cmd = {
           "/Users/eoin/.local/share/nvim/mason/bin/typescript-language-server",
